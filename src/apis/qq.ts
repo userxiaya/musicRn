@@ -88,7 +88,7 @@ export const getSongGroupListApi = (params?: {
       });
   });
 };
-
+//获取歌单详情
 export const getPlayDetailApi = (id: string): Promise<playDetail> => {
   return new Promise((resolve, reject) => {
     requestQQ({
@@ -131,6 +131,7 @@ export const getPlayDetailApi = (id: string): Promise<playDetail> => {
             return {
               id: e.songid,
               songmid: e.songmid,
+              songId: e.songmid,
               name: e.songname,
               isVip: e?.pay?.payplay === 1,
               albumImg: getImageUrl(e.albummid, 'album'),
@@ -151,7 +152,7 @@ export const getPlayDetailApi = (id: string): Promise<playDetail> => {
   });
 };
 // 获取歌曲地址
-export const getMusicUrlApi = (songmid: string): Promise<string> => {
+export const getMusicUrlApi = (id: string): Promise<string> => {
   return new Promise((resolve, reject) => {
     requestQQ({
       url: '/cgi-bin/musicu.fcg',
@@ -172,7 +173,7 @@ export const getMusicUrlApi = (songmid: string): Promise<string> => {
             method: 'CgiGetVkey',
             param: {
               guid: '10000',
-              songmid: [songmid],
+              songmid: [id],
               songtype: [0],
               uin: '0',
               loginflag: 1,

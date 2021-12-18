@@ -8,6 +8,7 @@ import {
   SafeAreaView,
   StyleSheet,
   Text,
+  ToastAndroid,
   View,
 } from 'react-native';
 import {useCreation, useMemoizedFn, useRequest, useSafeState} from 'ahooks';
@@ -19,9 +20,18 @@ import {
 } from '@/types';
 import musicTools from '@/utils/musicTools';
 import LinearGradient from 'react-native-linear-gradient';
-import {getMusicUrlApi, getPlayDetailApi as qqDetail} from '@/apis/qq';
-import {getPlayDetailApi as netEaseDetail} from '@/apis/netEase';
-import {getPlayDetailApi as kugouDetail} from '@/apis/kugou';
+import {
+  getMusicUrlApi as qqMusicUrlApi,
+  getPlayDetailApi as qqDetail,
+} from '@/apis/qq';
+import {
+  getMusicUrlApi as netEaseMusicUrlApi,
+  getPlayDetailApi as netEaseDetail,
+} from '@/apis/netEase';
+import {
+  getMusicUrlApi as kugouMusicUrlApi,
+  getPlayDetailApi as kugouDetail,
+} from '@/apis/kugou';
 import Header from '@/components/header';
 import styles from './style';
 import SongItem from '../components/songItem';
@@ -34,6 +44,16 @@ const apiMap: {
   QQ: qqDetail,
   netEase: netEaseDetail,
   kugou: kugouDetail,
+};
+const apiMap2: {
+  [name: string]: (id: string) => Promise<string>;
+} = {
+  QQ: qqMusicUrlApi,
+  netEase: netEaseMusicUrlApi,
+  kugou: kugouMusicUrlApi,
+};
+const showToast = (text: string) => {
+  ToastAndroid.show(text, ToastAndroid.SHORT);
 };
 interface DetailHeaderProps {
   playInfo?: playDetail;
@@ -215,18 +235,26 @@ const SongGroupDetail = ({route}: ReactNavicationRouteProps) => {
     return <Text style={[styles.footer]}>{text}</Text>;
   }, [loading]);
   const onSelectSong = useMemoizedFn((song?: songItemState) => {
-    if (song && song?.songmid) {
-      getMusicUrlApi(song.songmid).then(url => {
-        //提交到musicStore处理播放音频
-        dispatch({
-          type: 'SET_MUSIC',
-          payload: {
-            ...song,
-            id: song.songmid,
-            url,
-          },
+    if (song && song.songId) {
+      const urlService = apiMap2[songChannel];
+      urlService(song.songId)
+        .then(url => {
+          if (!url) {
+            showToast('获取播放路径失败！请切换渠道');
+            return;
+          }
+          //提交到musicStore处理播放音频
+          dispatch({
+            type: 'SET_MUSIC',
+            payload: {
+              ...song,
+              url,
+            },
+          });
+        })
+        .catch(() => {
+          showToast('获取播放路径失败！请切换渠道');
         });
-      });
     }
   });
   const renderItem = useMemoizedFn(

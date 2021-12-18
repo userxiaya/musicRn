@@ -9,7 +9,7 @@ export default StyleSheet.create({
     marginTop: 10,
     overflow: 'hidden',
     paddingRight: 10,
-    paddingLeft: 5,
+    paddingLeft: 10,
   },
   index: {
     fontSize: 16,

@@ -81,6 +81,34 @@ export const getSongGroupListApi = (params?: {
       });
   });
 };
+// 获取文件大小最大的文件hash
+const getMaxSizeFileHash = (extra: {[name: string]: string | number} = {}) => {
+  let max = 0;
+  let keyStr = '';
+  for (let key in extra) {
+    const val = extra[key];
+    if (typeof val === 'number' && val > max) {
+      max = val;
+      keyStr = key;
+    }
+  }
+  const result = extra[keyStr.replace('filesize', 'hash')];
+  return result + '';
+};
+// const getMinSizeFileHash = (extra: {[name: string]: string | number}) => {
+//   let min = 0;
+//   let keyStr = '';
+//   for (let key in extra) {
+//     const val = extra[key];
+//     if (typeof val === 'number' && (val < min || min === 0)) {
+//       min = val;
+//       keyStr = key;
+//     }
+//   }
+//   const result = extra[keyStr.replace('filesize', 'hash')];
+//   console.log(result, keyStr, extra);
+//   return result + '';
+// };
 export const getPlayDetailApi = (id: string): Promise<playDetail> => {
   return new Promise((resolve, reject) => {
     requestKugou({
@@ -94,6 +122,14 @@ export const getPlayDetailApi = (id: string): Promise<playDetail> => {
         const tracks = await Promise.all(
           list.map(async (item: any) => await getPlayListItem(item)),
         );
+        const hasListHash: string[] = [];
+        const lists = tracks.filter(e => {
+          const haveKey = hasListHash.indexOf(e.hash) === -1;
+          if (haveKey) {
+            hasListHash.push(e.hash);
+          }
+          return !!e.hash && haveKey;
+        });
         const result: playDetail = {
           id: info.specialid,
           name: info.specialname,
@@ -106,10 +142,11 @@ export const getPlayDetailApi = (id: string): Promise<playDetail> => {
               name: t.tagname,
             };
           }),
-          list: tracks.map((t: any) => {
+          list: lists.map((t: any) => {
             const singer = Array.isArray(t.authors) ? t.authors : [];
             return {
-              id: t.audio_id,
+              id: t.hash,
+              songId: getMaxSizeFileHash(t.extra),
               name: t.songName,
               isVip: false,
               singer: singer.map((s: {author_id: number; author_name: any}) => {
@@ -122,6 +159,26 @@ export const getPlayDetailApi = (id: string): Promise<playDetail> => {
           }),
         };
         resolve(result);
+      })
+      .catch(err => {
+        reject(err);
+      });
+  });
+};
+// 获取歌曲地址
+export const getMusicUrlApi = (id: string): Promise<string> => {
+  return new Promise((resolve, reject) => {
+    requestKugou({
+      method: 'GET',
+      url: '/app/i/getSongInfo.php',
+      baseURL: baseUrl1,
+      params: {
+        cmd: 'playInfo',
+        hash: id,
+      },
+    })
+      .then(async res => {
+        resolve(res.url);
       })
       .catch(err => {
         reject(err);

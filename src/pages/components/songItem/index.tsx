@@ -14,7 +14,7 @@ const getSingerName = (singer?: SingerItem[]) => {
   const result = singer.map(e => e.name);
   return result.join('/');
 };
-const SongItem = ({item, index, onClick}: SongItemProps) => {
+const SongItem = ({item, onClick}: SongItemProps) => {
   return (
     <TouchableHighlight
       underlayColor={''}
@@ -22,7 +22,7 @@ const SongItem = ({item, index, onClick}: SongItemProps) => {
         onClick?.(item);
       }}>
       <View style={[styles.songItem]}>
-        <Text style={[styles.index]}>{index}</Text>
+        {/* <Text style={[styles.index]}>{index}</Text> */}
         <View style={[styles.message_container]}>
           <Text style={[styles.name]} numberOfLines={1}>
             {item?.name}

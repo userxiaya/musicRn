@@ -36,6 +36,7 @@ export type songGroupData = {
 // 歌曲列表-item
 export type songItemState = {
   id: string;
+  songId: string;
   songmid?: string;
   albumImg?: string;
   name: string;
