@@ -117,7 +117,11 @@ function DetailHeader({
       colors={LinearColors}
       style={[styles.top_container, headerHeightStyle.style]}>
       <View style={[styles.top_container_content]}>
-        <Image style={styles.image} source={{uri: playInfo?.imageUrl}} />
+        <Image
+          style={styles.image}
+          source={{uri: playInfo?.imageUrl}}
+          resizeMode="cover"
+        />
         <View style={[styles.mess_content]}>
           <Text style={[styles.play_name]} numberOfLines={2}>
             {playInfo?.name}
