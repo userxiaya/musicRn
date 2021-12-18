@@ -8,7 +8,6 @@ import {
   SafeAreaView,
   StyleSheet,
   Text,
-  ToastAndroid,
   View,
 } from 'react-native';
 import {useCreation, useMemoizedFn, useRequest, useSafeState} from 'ahooks';
@@ -37,6 +36,7 @@ import styles from './style';
 import SongItem from '../components/songItem';
 import HTMLView from 'react-native-htmlview';
 import {MusicContext} from '@/store/music';
+import {showToast} from '@/utils/tools';
 
 const apiMap: {
   [name: string]: (id: string) => Promise<playDetail>;
@@ -52,9 +52,7 @@ const apiMap2: {
   netEase: netEaseMusicUrlApi,
   kugou: kugouMusicUrlApi,
 };
-const showToast = (text: string) => {
-  ToastAndroid.show(text, ToastAndroid.SHORT);
-};
+
 interface DetailHeaderProps {
   playInfo?: playDetail;
   headerHeight?: number;

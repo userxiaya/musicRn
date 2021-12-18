@@ -13,6 +13,7 @@ import {ThemeContext} from '@/store/theme';
 import SongGroup from '@/pages/components/songGroup';
 import {Tabs} from '@ant-design/react-native';
 import {TabBarPropsType} from '@ant-design/react-native/lib/tabs/PropsType';
+import {showToast} from '@/utils/tools';
 
 const styles = StyleSheet.create({
   container: {
@@ -47,7 +48,16 @@ function Home() {
   const {state: theme} = useContext(ThemeContext);
 
   const headerIcon: React.ReactNode = useCreation(() => {
-    return <Icon name="icon-search" size={24} color={theme?.text_color} />;
+    return (
+      <Icon
+        name="icon-search"
+        size={24}
+        color={theme?.text_color}
+        onPress={() => {
+          showToast('搜索功能尚未实现，请等候');
+        }}
+      />
+    );
   }, []);
   const activeTab = useMemoizedFn((active: boolean) => {
     const result = StyleSheet.create({
