@@ -193,7 +193,7 @@ export const getMusicUrlApi = (id: string): Promise<string> => {
     })
       .then(data => {
         if (data.req_0.data.midurlinfo[0].purl === '') {
-          return '';
+          return resolve('');
         }
         const url = data.req_0.data.sip[0] + data.req_0.data.midurlinfo[0].purl;
         resolve(url);

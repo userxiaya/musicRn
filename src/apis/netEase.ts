@@ -176,8 +176,7 @@ export const getMusicUrlApi = (id: string): Promise<string> => {
       .then(async res => {
         const {url: songUrl} = res.data[0];
         if (songUrl === null) {
-          resolve('');
-          return;
+          return resolve('');
         }
         resolve(songUrl);
       })

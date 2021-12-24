@@ -214,11 +214,10 @@ export const searchApi = (params?: {
   const {current = 1, keyword = ''} = params || {};
   return new Promise((resolve, reject) => {
     if (!keyword) {
-      resolve({
+      return resolve({
         total: 0,
         list: [],
       });
-      return;
     }
     requestKugou({
       method: 'GET',

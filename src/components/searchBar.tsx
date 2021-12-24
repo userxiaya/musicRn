@@ -19,7 +19,11 @@ const STATUSBAR_HEIGHT = Platform.OS === 'ios' ? 20 : StatusBarManager.HEIGHT;
 
 const styles = StyleSheet.create({
   none: {
-    display: 'none',
+    position: 'absolute',
+    top: 50,
+    width: 200,
+    right: -30,
+    opacity: 0,
   },
   search_container: {
     width: '100%',
@@ -128,7 +132,6 @@ function SearchBar(props: SearchProps) {
         mode={'dialog'}
         style={styles.none}
         selectedValue={props.channel}
-        numberOfLines={1}
         onValueChange={(itemValue: songChannel) => {
           props?.onChannelChange?.(itemValue);
         }}>
