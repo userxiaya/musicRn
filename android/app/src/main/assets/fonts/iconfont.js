@@ -1,3 +1,8 @@
+/* eslint-disable eqeqeq */
+/* eslint-disable no-bitwise */
+/* eslint-disable no-void */
+/* eslint-disable no-shadow */
+/* eslint-disable no-catch-shadow */
 !(function (c) {
   var t,
     e,

@@ -15,8 +15,8 @@ const styles = StyleSheet.create({
     display: 'none',
   },
 });
-type Action = {type: 'SET_MUSIC'; payload: MusicStoreState | null};
-function reducer(state: MusicStoreState | null, action?: Action) {
+export type MusicAction = {type: 'SET_MUSIC'; payload: MusicStoreState | null};
+function reducer(state: MusicStoreState | null, action?: MusicAction) {
   switch (action?.type) {
     case 'SET_MUSIC':
       return {...state, ...action.payload};
@@ -30,7 +30,7 @@ interface MusicStoreProps {
 
 export const MusicContext = createContext<{
   state?: MusicStoreState | null;
-  dispatch: React.Dispatch<Action>;
+  dispatch: React.Dispatch<MusicAction>;
 }>({
   state: null,
   dispatch: () => null,

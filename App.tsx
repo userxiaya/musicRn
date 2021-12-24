@@ -27,9 +27,9 @@ export default function App() {
     <SafeAreaProvider style={styles.app}>
       {/* 沉浸式状态栏 */}
       <StatusBar
-        translucent={true}
-        hidden={isMounted}
+        translucent={isMounted}
         backgroundColor="transparent"
+        barStyle="dark-content"
       />
       <ThemeStore>
         <MusicStore>

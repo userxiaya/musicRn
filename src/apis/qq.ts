@@ -1,5 +1,10 @@
 import request from '@/request';
-import {playDetail, songGroupData} from '@/types';
+import {
+  playDetail,
+  searchSongData,
+  songGroupData,
+  songItemState,
+} from '@/types';
 import {AxiosRequestConfig} from 'axios';
 
 function getImageUrl(qqimgid: string, imgType: 'artist' | 'album') {
@@ -24,6 +29,23 @@ const requestQQ = (option: AxiosRequestConfig<any>) => {
       Referer: 'https://y.qq.com/',
     },
   });
+};
+const songItemCover = (items: any): songItemState => {
+  return {
+    id: items.songid,
+    songmid: items.songmid,
+    songId: items.songmid,
+    name: items.songname,
+    isVip: items?.pay?.payplay === 1,
+    albumImg: getImageUrl(items.albummid, 'album'),
+    singer: items.singer.map((s: {id: number; name: string}) => {
+      return {
+        id: s.id,
+        name: s.name,
+      };
+    }),
+    channel: 'QQ',
+  };
 };
 const baseUrl1 = 'https://c.y.qq.com';
 const baseUrl2 = 'https://u.y.qq.com';
@@ -127,22 +149,7 @@ export const getPlayDetailApi = (id: string): Promise<playDetail> => {
               name: t.name,
             };
           }),
-          list: data.songlist.map((e: any) => {
-            return {
-              id: e.songid,
-              songmid: e.songmid,
-              songId: e.songmid,
-              name: e.songname,
-              isVip: e?.pay?.payplay === 1,
-              albumImg: getImageUrl(e.albummid, 'album'),
-              singer: e.singer.map((s: {id: number; name: string}) => {
-                return {
-                  id: s.id,
-                  name: s.name,
-                };
-              }),
-            };
-          }),
+          list: data.songlist.map(songItemCover),
         };
         resolve(result);
       })
@@ -192,7 +199,62 @@ export const getMusicUrlApi = (id: string): Promise<string> => {
         resolve(url);
       })
       .catch(err => {
-        console.log('errrr', JSON.parse(err));
+        reject(err);
+      });
+  });
+};
+//搜索
+export const searchApi = (params?: {
+  current?: number;
+  pageSize?: number;
+  keyword?: string;
+}): Promise<searchSongData> => {
+  console.log('QQSearch');
+  const {current = 1, pageSize = 30, keyword = ''} = params || {};
+  return new Promise((resolve, reject) => {
+    if (!keyword) {
+      resolve({
+        total: 0,
+        list: [],
+      });
+      return;
+    }
+    requestQQ({
+      url: '/soso/fcgi-bin/client_search_cp',
+      method: 'GET',
+      baseURL: baseUrl1,
+      params: {
+        g_tk: '938407465',
+        uin: 0,
+        format: 'json',
+        inCharset: 'utf-8',
+        outCharset: 'utf-8',
+        notice: 0,
+        platform: 'h5',
+        needNewCode: 1,
+        w: keyword,
+        zhidaqu: 1,
+        catZhida: 1,
+        t: 0,
+        flag: 1,
+        ie: 'utf-8',
+        sem: 1,
+        aggr: 0,
+        perpage: pageSize,
+        n: pageSize,
+        p: current,
+        remoteplace: 'txt.mqq.all',
+        _: 1459991037831,
+      },
+    })
+      .then(({data}) => {
+        const {song = {}} = data;
+        resolve({
+          total: song.totalnum || 0,
+          list: (song.list || []).map(songItemCover),
+        });
+      })
+      .catch(err => {
         reject(err);
       });
   });

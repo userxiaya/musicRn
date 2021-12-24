@@ -33,6 +33,7 @@ export type songGroupData = {
   list: songGroupItem[];
   total: number;
 };
+export type searchSongData = {total: number; list: songItemState[]};
 // 歌曲列表-item
 export type songItemState = {
   id: string;
@@ -42,6 +43,7 @@ export type songItemState = {
   name: string;
   isVip: boolean;
   singer: SingerItem[];
+  channel: songChannel;
 };
 // 歌单详情
 export type playDetail = {

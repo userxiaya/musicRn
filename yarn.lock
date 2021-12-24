@@ -1210,6 +1210,11 @@
   resolved "https://registry.npmmirror.com/@react-native-community/slider/download/@react-native-community/slider-4.1.12.tgz#279ff7bbe487af92ad95ec758a029a54569e2a62"
   integrity sha512-CiuLZ2orueBiWHYxfaJF57jQY6HY2Q3z5pdAE4MKH8EqIImr/jgDJrJ/UxOVZHK1Ng9P+XlGIKfVIcuWZ6guuA==
 
+"@react-native-picker/picker@^2.2.1":
+  version "2.2.1"
+  resolved "https://registry.npmmirror.com/@react-native-picker/picker/download/@react-native-picker/picker-2.2.1.tgz#32b9f540d8e88a73d8856f73cca88251cecb9614"
+  integrity sha512-EC7yv22QLHlTfnbC1ez9IUdXTOh1W31x96Oir0PfskSGFFJMWWdLTg4VrcE2DsGLzbfjjkBk123c173vf2a5MQ==
+
 "@react-native/assets@1.0.0":
   version "1.0.0"
   resolved "https://registry.npmmirror.com/@react-native/assets/download/@react-native/assets-1.0.0.tgz?cache=0&other_urls=https%3A%2F%2Fregistry.npmmirror.com%2F%40react-native%2Fassets%2Fdownload%2F%40react-native%2Fassets-1.0.0.tgz"
@@ -1391,6 +1396,11 @@
   version "7.0.9"
   resolved "https://registry.npmmirror.com/@types/json-schema/download/@types/json-schema-7.0.9.tgz?cache=0&sync_timestamp=1637266478923&other_urls=https%3A%2F%2Fregistry.npmmirror.com%2F%40types%2Fjson-schema%2Fdownload%2F%40types%2Fjson-schema-7.0.9.tgz"
   integrity sha1-l+3JA36gw4WFMgsolk3eOznkZg0=
+
+"@types/lodash@^4.14.178":
+  version "4.14.178"
+  resolved "https://registry.npmmirror.com/@types/lodash/download/@types/lodash-4.14.178.tgz#341f6d2247db528d4a13ddbb374bcdc80406f4f8"
+  integrity sha512-0d5Wd09ItQWH1qFbEyQ7oTQ3GZrMfth5JkbN3EvTKLXcHLRDSXeLnlvlOn0wvxVIwK5o2M8JzP/OWz7T3NRsbw==
 
 "@types/node@*":
   version "16.11.10"
@@ -1694,6 +1704,11 @@ ansi-styles@^4.0.0, ansi-styles@^4.1.0:
   integrity sha1-7dgDYornHATIWuegkG7a00tkiTc=
   dependencies:
     color-convert "^2.0.1"
+
+antd-mobile-demo-data@^0.3.0:
+  version "0.3.0"
+  resolved "https://registry.npmmirror.com/antd-mobile-demo-data/download/antd-mobile-demo-data-0.3.0.tgz#f275250bebdad308af481672635f8b90def34aed"
+  integrity sha1-8nUlC+va0wivSBZyY1+LkN7zSu0=
 
 anymatch@^2.0.0:
   version "2.0.0"
@@ -2517,6 +2532,11 @@ dayjs@^1.8.15, dayjs@^1.9.1:
   version "1.10.7"
   resolved "https://registry.npmmirror.com/dayjs/download/dayjs-1.10.7.tgz?cache=0&sync_timestamp=1632754559701&other_urls=https%3A%2F%2Fregistry.npmmirror.com%2Fdayjs%2Fdownload%2Fdayjs-1.10.7.tgz"
   integrity sha1-LPX5Gt0oEWdIRAhmoKHSbzps5Gg=
+
+debounce@^1.2.1:
+  version "1.2.1"
+  resolved "https://registry.npmmirror.com/debounce/download/debounce-1.2.1.tgz#38881d8f4166a5c5848020c11827b834bcb3e0a5"
+  integrity sha1-OIgdj0FmpcWEgCDBGCe4NLyz4KU=
 
 debug@2.6.9, debug@^2.2.0, debug@^2.3.3:
   version "2.6.9"

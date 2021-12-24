@@ -13,7 +13,7 @@ import {ThemeContext} from '@/store/theme';
 import SongGroup from '@/pages/components/songGroup';
 import {Tabs} from '@ant-design/react-native';
 import {TabBarPropsType} from '@ant-design/react-native/lib/tabs/PropsType';
-import {showToast} from '@/utils/tools';
+import {ReactNavicationRouteProps} from '@/types';
 
 const styles = StyleSheet.create({
   container: {
@@ -43,7 +43,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
 });
-function Home() {
+function Home({navigation}: ReactNavicationRouteProps) {
   const tabs = [{title: 'QQ'}, {title: '网易云'}, {title: '酷狗'}];
   const {state: theme} = useContext(ThemeContext);
 
@@ -54,7 +54,7 @@ function Home() {
         size={24}
         color={theme?.text_color}
         onPress={() => {
-          showToast('搜索功能尚未实现，请等候');
+          navigation.navigate('search');
         }}
       />
     );

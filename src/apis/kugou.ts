@@ -1,5 +1,11 @@
 import request from '@/request';
-import {playDetail, songGroupData} from '@/types';
+import {
+  playDetail,
+  searchSongData,
+  songChannel,
+  songGroupData,
+  songItemState,
+} from '@/types';
 import {AxiosRequestConfig} from 'axios';
 import moment from 'moment';
 
@@ -32,9 +38,10 @@ const getPlayListItem = (item: {hash: string; album_id: string}) => {
 };
 
 const baseUrl1 = 'https://m.kugou.com';
+const baseUrl2 = 'http://songsearch.kugou.com';
 
 /**
- *
+ * (pageSize无效 只能30)
  * @param current 当前页
  * @param pageSize 每页n条
  * @returns
@@ -95,6 +102,32 @@ const getMaxSizeFileHash = (extra: {[name: string]: string | number} = {}) => {
   const result = extra[keyStr.replace('filesize', 'hash')];
   return result + '';
 };
+const songItemCover = (song: any, type?: string): songItemState => {
+  if (type === 'search') {
+    return {
+      id: song.FileHash,
+      songId: song.FileHash,
+      name: song.SongName,
+      isVip: false,
+      singer: song.Singers || [],
+      channel: 'kugou',
+    };
+  }
+  const singer = Array.isArray(song.authors) ? song.authors : [];
+  return {
+    id: song.hash,
+    songId: getMaxSizeFileHash(song.extra),
+    name: song.songName,
+    isVip: false,
+    singer: singer.map((s: {author_id: number; author_name: any}) => {
+      return {
+        id: s.author_id,
+        name: s.author_name,
+      };
+    }),
+    channel: 'kugou' as songChannel,
+  };
+};
 // const getMinSizeFileHash = (extra: {[name: string]: string | number}) => {
 //   let min = 0;
 //   let keyStr = '';
@@ -142,21 +175,7 @@ export const getPlayDetailApi = (id: string): Promise<playDetail> => {
               name: t.tagname,
             };
           }),
-          list: lists.map((t: any) => {
-            const singer = Array.isArray(t.authors) ? t.authors : [];
-            return {
-              id: t.hash,
-              songId: getMaxSizeFileHash(t.extra),
-              name: t.songName,
-              isVip: false,
-              singer: singer.map((s: {author_id: number; author_name: any}) => {
-                return {
-                  id: s.author_id,
-                  name: s.author_name,
-                };
-              }),
-            };
-          }),
+          list: lists.map(items => songItemCover(items)),
         };
         resolve(result);
       })
@@ -179,6 +198,45 @@ export const getMusicUrlApi = (id: string): Promise<string> => {
     })
       .then(async res => {
         resolve(res.url);
+      })
+      .catch(err => {
+        reject(err);
+      });
+  });
+};
+//搜索 (pageSize无效 只能30)
+export const searchApi = (params?: {
+  current?: number;
+  pageSize?: number;
+  keyword?: string;
+}): Promise<searchSongData> => {
+  console.log('kugouSearch');
+  const {current = 1, keyword = ''} = params || {};
+  return new Promise((resolve, reject) => {
+    if (!keyword) {
+      resolve({
+        total: 0,
+        list: [],
+      });
+      return;
+    }
+    requestKugou({
+      method: 'GET',
+      url: '/song_search_v2',
+      baseURL: baseUrl2,
+      params: {
+        keyword,
+        page: current,
+      },
+    })
+      .then(({data}) => {
+        resolve({
+          total: data.total,
+          list:
+            data.total === 0
+              ? []
+              : data.lists.map((item: any) => songItemCover(item, 'search')),
+        });
       })
       .catch(err => {
         reject(err);

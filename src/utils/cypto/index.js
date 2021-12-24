@@ -47,12 +47,8 @@ export const weapi = object => {
 
   const text = JSON.stringify(object);
   const secretKey = getRandomBase62(16);
-
-  // const secretKey = "1234123412341234";
   return {
     params: aesEncrypt(aesEncrypt(text, presetKey, iv), secretKey, iv),
     encSecKey: rsaEncrypt(reverseString(secretKey), publicKey),
   };
 };
-// module.exports = weapi;
-// console.log(weapi({name:'secret'}))

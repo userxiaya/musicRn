@@ -17,7 +17,7 @@ import LinearGradient from 'react-native-linear-gradient';
 
 const {StatusBarManager} = NativeModules;
 const STATUSBAR_HEIGHT =
-  (Platform.OS === 'ios' ? 20 : StatusBarManager.HEIGHT) / 3;
+  (Platform.OS === 'ios' ? 20 : StatusBarManager.HEIGHT) / 2;
 const styles = StyleSheet.create({
   header: {
     width: '100%',

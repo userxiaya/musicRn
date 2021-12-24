@@ -73,9 +73,10 @@ const SongGroup = ({channel}: SongGroupProps) => {
       },
       // eslint-disable-next-line no-shadow
       onSuccess: (data: songGroupData) => {
+        const newCurrent = state.curretPage + 1;
         setState({
-          curretPage: state.curretPage + 1,
-          noMore: data.total / pageSize <= state.curretPage,
+          curretPage: newCurrent,
+          noMore: data.total / pageSize <= newCurrent,
         });
       },
       onFinally() {

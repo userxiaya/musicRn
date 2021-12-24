@@ -2,7 +2,12 @@ import request from '@/request';
 import queryString from 'query-string';
 import {weapi} from '@/utils/cypto';
 import moment from 'moment';
-import {playDetail, songGroupData, songItemState} from '@/types';
+import {
+  playDetail,
+  searchSongData,
+  songGroupData,
+  songItemState,
+} from '@/types';
 import {AxiosRequestConfig} from 'axios';
 
 const requestNetEase = (option: AxiosRequestConfig<any>) => {
@@ -19,7 +24,17 @@ const requestNetEase = (option: AxiosRequestConfig<any>) => {
 };
 
 const baseUrl1: string = 'https://music.163.com';
-
+const songItemCover = (items: any): songItemState => ({
+  id: items.id,
+  songId: items.id,
+  name: items.name,
+  isVip: false,
+  singer: items.ar.map((e: {id: number; name: string}) => ({
+    id: e.id,
+    name: e.name,
+  })),
+  channel: 'netEase',
+});
 const querySongList = (trackIds: string[]): Promise<songItemState[]> => {
   return new Promise((resolve, reject) => {
     const data = {
@@ -34,17 +49,7 @@ const querySongList = (trackIds: string[]): Promise<songItemState[]> => {
     })
       .then(res => {
         const list: any[] = res?.songs || [];
-        const result: songItemState[] = list.map(e => ({
-          id: e.id,
-          songId: e.id,
-          name: e.name,
-          isVip: false,
-          // eslint-disable-next-line no-shadow
-          singer: e.ar.map((e: {id: number; name: string}) => ({
-            id: e.id,
-            name: e.name,
-          })),
-        }));
+        const result: songItemState[] = list.map(songItemCover);
         resolve(result);
       })
       .catch(err => {
@@ -80,17 +85,17 @@ export const getSongGroupListApi = (params?: {
       .then(res => {
         const result: songGroupData = {
           total: res.total,
-          list: res.playlists.map((e: any) => ({
-            updateTime: moment(e?.updateTime).format('YYYY-MM-dd'),
-            createtime: moment(e?.createTime).format('YYYY-MM-dd'),
+          list: res.playlists.map((items: any) => ({
+            updateTime: moment(items?.updateTime).format('YYYY-MM-dd'),
+            createtime: moment(items?.createTime).format('YYYY-MM-dd'),
             creator: {
-              avatarUrl: e?.creator?.avatarUrl,
-              name: e?.creator?.name,
+              avatarUrl: items?.creator?.avatarUrl,
+              name: items?.creator?.name,
             },
-            id: e?.id,
-            name: e?.name,
-            imageUrl: e?.coverImgUrl,
-            listenCount: e?.playCount, // 播放数量
+            id: items?.id,
+            name: items?.name,
+            imageUrl: items?.coverImgUrl,
+            listenCount: items?.playCount, // 播放数量
             songChannel: 'netEase',
           })),
         };
@@ -175,6 +180,42 @@ export const getMusicUrlApi = (id: string): Promise<string> => {
           return;
         }
         resolve(songUrl);
+      })
+      .catch(err => {
+        reject(err);
+      });
+  });
+};
+export const searchApi = (params?: {
+  current?: number;
+  pageSize?: number;
+  keyword?: string;
+}): Promise<searchSongData> => {
+  console.log('netEaseSearch');
+  return new Promise((resolve, reject) => {
+    const {keyword = '', pageSize = 30, current = 1} = params || {};
+    const data = {
+      csrf_token: '',
+      hlposttag: '</span>',
+      hlpretag: '<span class="s-fc7">',
+      limit: pageSize,
+      offset: (pageSize * (current - 1)).toString(),
+      s: keyword,
+      total: 'false',
+      type: '1',
+    };
+    requestNetEase({
+      url: '/weapi/cloudsearch/get/web',
+      method: 'POST',
+      baseURL: baseUrl1,
+      data,
+    })
+      .then(res => {
+        const {result = {}} = res;
+        resolve({
+          total: result.songCount,
+          list: result.songs.map(songItemCover),
+        });
       })
       .catch(err => {
         reject(err);

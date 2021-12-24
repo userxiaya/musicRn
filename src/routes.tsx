@@ -7,6 +7,7 @@ import {
 import {NavigationContainer} from '@react-navigation/native';
 import Home from './pages/Home';
 import Detail from './pages/songGroupDetail';
+import SearchPage from './pages/search';
 
 const options = {
   transitionSpec: {
@@ -23,6 +24,7 @@ interface RouterConfig {
 const routesList: RouterConfig[] = [
   {name: 'Home', component: Home},
   {name: 'songGroupDetail', component: Detail},
+  {name: 'search', component: SearchPage},
 ];
 const Stack = createStackNavigator();
 const Router = () => {
