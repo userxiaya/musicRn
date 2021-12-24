@@ -37,7 +37,7 @@ const songItemCover = (items: any): songItemState => {
     songId: items.songmid,
     name: items.songname,
     isVip: items?.pay?.payplay === 1,
-    albumImg: getImageUrl(items.albummid, 'album'),
+    coverImage: getImageUrl(items.albummid, 'album'),
     singer: items.singer.map((s: {id: number; name: string}) => {
       return {
         id: s.id,

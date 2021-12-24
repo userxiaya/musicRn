@@ -3,9 +3,11 @@ import React, {createContext, useReducer, ReactNode} from 'react';
 import Video from 'react-native-video';
 import {StyleSheet} from 'react-native';
 import {SingerItem} from '@/types';
+import musicTools from '@/utils/musicTools';
 
 export interface MusicStoreState {
   id?: string;
+  name?: string;
   url?: string;
   coverImage?: string;
   singer?: SingerItem[];
@@ -19,6 +21,13 @@ export type MusicAction = {type: 'SET_MUSIC'; payload: MusicStoreState | null};
 function reducer(state: MusicStoreState | null, action?: MusicAction) {
   switch (action?.type) {
     case 'SET_MUSIC':
+      const singers = action?.payload?.singer || [];
+      console.log(musicTools.notifyMusic);
+      musicTools.notifyMusic(
+        action?.payload?.name || '歌名',
+        singers.map(e => e.name).join('/') || '歌手',
+        action?.payload?.coverImage || '',
+      );
       return {...state, ...action.payload};
     default:
       return state;

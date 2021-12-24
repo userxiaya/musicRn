@@ -16,7 +16,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 public class MainApplication extends Application implements ReactApplication {
-
+  private static Context appContext;
   private final ReactNativeHost mReactNativeHost =
       new ReactNativeHost(this) {
         @Override
@@ -44,9 +44,14 @@ public class MainApplication extends Application implements ReactApplication {
     return mReactNativeHost;
   }
 
+  public Context getContext(){
+      return appContext;
+  }
+
   @Override
   public void onCreate() {
     super.onCreate();
+    appContext = this;
     SoLoader.init(this, /* native exopackage */ false);
     initializeFlipper(this, getReactNativeHost().getReactInstanceManager());
   }

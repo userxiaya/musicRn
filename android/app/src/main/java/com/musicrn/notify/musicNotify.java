@@ -22,8 +22,8 @@ public class musicNotify extends ReactContextBaseJavaModule {
         return "musicNotify";
     }
     @ReactMethod
-    public void show(String message, int duration) {
-        Toast.makeText(getReactApplicationContext(), message, duration).show();
+    public void notifyMusic(String songName, String artistName, String imgUrl) {
+       new NotifyManager().notifyMusic(songName, artistName, imgUrl);
     }
     @ReactMethod
     public void getBackGroundByImage(String image, Callback successCallback, Callback errorCallback) {

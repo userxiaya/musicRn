@@ -1,3 +1,7 @@
 <resources>
-    <string name="app_name">musicRn</string>
+    <string name="app_name">ring</string>
+    <string name="notification_description">通知栏播放控制</string>
+    <string name="notification_channel_id">music_ring_007</string>
+    <string name="song_title">歌曲名</string>
+    <string name="song_artist">歌手名</string>
 </resources>

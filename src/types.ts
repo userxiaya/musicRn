@@ -39,7 +39,7 @@ export type songItemState = {
   id: string;
   songId: string;
   songmid?: string;
-  albumImg?: string;
+  coverImage?: string;
   name: string;
   isVip: boolean;
   singer: SingerItem[];
