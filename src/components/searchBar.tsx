@@ -18,6 +18,9 @@ const {StatusBarManager} = NativeModules;
 const STATUSBAR_HEIGHT = Platform.OS === 'ios' ? 20 : StatusBarManager.HEIGHT;
 
 const styles = StyleSheet.create({
+  none: {
+    display: 'none',
+  },
   search_container: {
     width: '100%',
     height: 40,
@@ -122,8 +125,8 @@ function SearchBar(props: SearchProps) {
         ref={picker => {
           pickerRef.current = picker;
         }}
-        // eslint-disable-next-line react-native/no-inline-styles
-        style={{display: 'none'}}
+        mode={'dialog'}
+        style={styles.none}
         selectedValue={props.channel}
         numberOfLines={1}
         onValueChange={(itemValue: songChannel) => {
