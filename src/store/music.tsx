@@ -21,12 +21,13 @@ export type MusicAction = {type: 'SET_MUSIC'; payload: MusicStoreState | null};
 function reducer(state: MusicStoreState | null, action?: MusicAction) {
   switch (action?.type) {
     case 'SET_MUSIC':
-      const singers = action?.payload?.singer || [];
-      console.log(musicTools.notifyMusic);
+      const {payload = {}} = action;
+      const singers = payload?.singer || [];
+      console.log(payload?.coverImage || 'empty');
       musicTools.notifyMusic(
-        action?.payload?.name || '歌名',
+        payload?.name || '歌名',
         singers.map(e => e.name).join('/') || '歌手',
-        action?.payload?.coverImage || '',
+        payload?.coverImage || '',
       );
       return {...state, ...action.payload};
     default:

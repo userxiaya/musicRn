@@ -25,6 +25,11 @@ public class musicNotify extends ReactContextBaseJavaModule {
     public void notifyMusic(String songName, String artistName, String imgUrl) {
        new NotifyManager().notifyMusic(songName, artistName, imgUrl);
     }
+    //关闭通知栏
+    @ReactMethod
+    public void closeNotify() {
+       new NotifyManager().destory();
+    }
     @ReactMethod
     public void getBackGroundByImage(String image, Callback successCallback, Callback errorCallback) {
         tools.getBackgroundByUrl(image,successCallback, errorCallback);

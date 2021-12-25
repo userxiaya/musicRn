@@ -29,6 +29,7 @@ const songItemCover = (items: any): songItemState => ({
   songId: items.id,
   name: items.name,
   isVip: false,
+  coverImage: items.al.picUrl,
   singer: items.ar.map((e: {id: number; name: string}) => ({
     id: e.id,
     name: e.name,

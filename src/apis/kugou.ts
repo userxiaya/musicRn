@@ -20,7 +20,7 @@ const requestKugou = (option: AxiosRequestConfig<any>) => {
     },
   });
 };
-const getPlayListItem = (item: {hash: string; album_id: string}) => {
+const getPlayListItem = (item: {hash: string}) => {
   const url = `/app/i/getSongInfo.php?cmd=playInfo&hash=${item.hash}`;
   return new Promise((resolve, reject) => {
     requestKugou({
@@ -39,6 +39,7 @@ const getPlayListItem = (item: {hash: string; album_id: string}) => {
 
 const baseUrl1 = 'https://m.kugou.com';
 const baseUrl2 = 'http://songsearch.kugou.com';
+// const baseUrl3 = 'http://www.kugou.com';
 
 /**
  * (pageSize无效 只能30)
@@ -102,20 +103,29 @@ const getMaxSizeFileHash = (extra: {[name: string]: string | number} = {}) => {
   const result = extra[keyStr.replace('filesize', 'hash')];
   return result + '';
 };
-const songItemCover = (song: any, type?: string): songItemState => {
-  if (type === 'search') {
-    return {
-      id: song.FileHash,
-      songId: song.FileHash,
-      name: song.SongName,
-      isVip: false,
-      singer: song.Singers || [],
-      channel: 'kugou',
-    };
-  }
+// const getCoverImage = (FileHash: string): Promise<string> => {
+//   return new Promise(resolve => {
+//     requestKugou({
+//       url: `/yy/index.php?r=play/getdata&hash=${FileHash}`,
+//       method: 'GET',
+//       baseURL: baseUrl3,
+//     })
+//       .then(data => {
+//         resolve(data.img || '');
+//       })
+//       .catch(() => {
+//         resolve('');
+//       });
+//   });
+// };
+const songItemCover = (song: any): songItemState => {
+  const coverImage = song.album_img
+    ? `${song.album_img.replace('{size}', '400')}`
+    : '';
   const singer = Array.isArray(song.authors) ? song.authors : [];
   return {
     id: song.hash,
+    coverImage,
     songId: getMaxSizeFileHash(song.extra),
     name: song.songName,
     isVip: false,
@@ -228,13 +238,21 @@ export const searchApi = (params?: {
         page: current,
       },
     })
-      .then(({data}) => {
+      .then(async ({data}) => {
+        const tracks = await Promise.all(
+          data.lists.map(async (item: any) => {
+            item.hash = item.FileHash;
+            return await getPlayListItem(item);
+          }),
+        );
         resolve({
           total: data.total,
           list:
             data.total === 0
               ? []
-              : data.lists.map((item: any) => songItemCover(item, 'search')),
+              : tracks.map((item: any) => {
+                  return songItemCover(item);
+                }),
         });
       })
       .catch(err => {

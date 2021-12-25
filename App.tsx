@@ -1,11 +1,12 @@
-import React from 'react';
-import {StatusBar, StyleSheet} from 'react-native';
+import React, {useEffect} from 'react';
+import {Alert, BackHandler, StatusBar, StyleSheet} from 'react-native';
 
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 import MusicStore from '@/store/music';
 import Router from '@/routes';
 import ThemeStore from '@/store/theme';
 import {useMount, useSafeState, useUnmount} from 'ahooks';
+import musicTools from '@/utils/musicTools';
 
 const styles = StyleSheet.create({
   app: {
@@ -20,6 +21,30 @@ export default function App() {
       setMounted(true);
     }, 50);
   });
+  useEffect(() => {
+    const backAction = () => {
+      Alert.alert('提示', '是否退出app', [
+        {
+          text: '否',
+          onPress: () => null,
+          style: 'cancel',
+        },
+        {
+          text: '是',
+          onPress: () => {
+            musicTools.closeNotify();
+            BackHandler.exitApp();
+          },
+        },
+      ]);
+      return true;
+    };
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      backAction,
+    );
+    return () => backHandler.remove();
+  }, []);
   useUnmount(() => {
     setMounted(false);
   });
