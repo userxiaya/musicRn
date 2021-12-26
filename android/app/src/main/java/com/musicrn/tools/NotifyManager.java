@@ -1,4 +1,4 @@
-package com.musicrn.notify;
+package com.musicrn.tools;
 
 import static android.content.Context.NOTIFICATION_SERVICE;
 

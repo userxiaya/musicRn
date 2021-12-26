@@ -124,7 +124,7 @@ const songItemCover = (song: any): songItemState => {
     : '';
   const singer = Array.isArray(song.authors) ? song.authors : [];
   return {
-    id: song.hash,
+    id: `kugou_${song.hash}`,
     coverImage,
     songId: getMaxSizeFileHash(song.extra),
     name: song.songName,

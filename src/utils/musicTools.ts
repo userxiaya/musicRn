@@ -1,2 +1,2 @@
 import {NativeModules} from 'react-native';
-export default NativeModules.musicNotify;
+export default NativeModules.musicTools;

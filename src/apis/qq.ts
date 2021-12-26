@@ -32,7 +32,7 @@ const requestQQ = (option: AxiosRequestConfig<any>) => {
 };
 const songItemCover = (items: any): songItemState => {
   return {
-    id: items.songid,
+    id: `QQ_${items.songid}`,
     songmid: items.songmid,
     songId: items.songmid,
     name: items.songname,

@@ -39,11 +39,12 @@ export type songItemState = {
   id: string;
   songId: string;
   songmid?: string;
-  coverImage?: string;
+  coverImage?: string; //歌曲图片
   name: string;
   isVip: boolean;
   singer: SingerItem[];
   channel: songChannel;
+  songUrl?: string; //歌曲url
 };
 // 歌单详情
 export type playDetail = {

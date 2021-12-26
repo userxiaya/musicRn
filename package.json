@@ -8,6 +8,7 @@
     "start": "react-native start",
     "test": "jest",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
+    "build:android": "cd android && gradlew assembleRelease",
     "build:iconfont": "node ./scripts/iconfont2json.js"
   },
   "dependencies": {

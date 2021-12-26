@@ -25,7 +25,7 @@ const requestNetEase = (option: AxiosRequestConfig<any>) => {
 
 const baseUrl1: string = 'https://music.163.com';
 const songItemCover = (items: any): songItemState => ({
-  id: items.id,
+  id: `netEase_${items.id}`,
   songId: items.id,
   name: items.name,
   isVip: false,

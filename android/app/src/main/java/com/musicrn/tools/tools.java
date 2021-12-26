@@ -1,4 +1,4 @@
-package com.musicrn.notify;
+package com.musicrn.tools;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;

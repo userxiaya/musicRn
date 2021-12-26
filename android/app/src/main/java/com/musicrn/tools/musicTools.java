@@ -1,6 +1,4 @@
-package com.musicrn.notify;
-
-import android.widget.Toast;
+package com.musicrn.tools;
 
 import androidx.annotation.NonNull;
 
@@ -9,17 +7,17 @@ import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
 
-public class musicNotify extends ReactContextBaseJavaModule {
+public class musicTools extends ReactContextBaseJavaModule {
     private static ReactApplicationContext reactContext;
 
-    public musicNotify(ReactApplicationContext context) {
+    public musicTools(ReactApplicationContext context) {
         super(context);
         reactContext = context;
     }
     @NonNull
     @Override
     public String getName() {
-        return "musicNotify";
+        return "musicTools";
     }
     @ReactMethod
     public void notifyMusic(String songName, String artistName, String imgUrl) {
