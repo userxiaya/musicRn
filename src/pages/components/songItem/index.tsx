@@ -2,7 +2,7 @@ import React from 'react';
 import {Text, View, Image, TouchableHighlight} from 'react-native';
 import {SingerItem, songItemState} from '@/types';
 import styles from './style';
-import {useMisic} from '@/store/music';
+import {useMusic} from '@/store/music';
 
 interface SongItemProps {
   item: songItemState;
@@ -17,7 +17,7 @@ const getSingerName = (singer?: SingerItem[]) => {
 };
 
 const SongItem = ({item}: SongItemProps) => {
-  const {add: addMisic} = useMisic();
+  const {add: addMisic} = useMusic();
   return (
     <TouchableHighlight
       underlayColor={''}

@@ -18,30 +18,60 @@ const apiMap: {
   netEase: netEaseMusicUrlApi,
   kugou: kugouMusicUrlApi,
 };
+const getSongUrl = (song: songItemState): Promise<string> => {
+  const {channel: songChannel} = song;
+  const urlService = apiMap[songChannel];
+  return new Promise((resolve, reject) => {
+    urlService(song.songId)
+      .then(songUrl => {
+        if (!songUrl) {
+          showToast('获取播放路径失败！请切换渠道');
+          reject('');
+          return;
+        }
+        resolve(songUrl);
+      })
+      .catch(() => {
+        showToast('获取播放路径失败！请切换渠道');
+        reject('');
+      });
+  });
+};
 
 export interface MusicStoreState {
   songList: songItemState[]; //歌曲列表
   id?: string; //当前歌曲Id
+  paused: boolean;
 }
 const styles = StyleSheet.create({
   backgroundVideo: {
     display: 'none',
   },
 });
-export type MusicAction = {type: 'ADD_MUSIC'; payload: songItemState};
+export type MusicAction = {
+  type: 'ADD_MUSIC' | 'SET_PLAY_STATUS';
+  payload?: songItemState;
+};
 function reducer(state: MusicStoreState, action?: MusicAction) {
   switch (action?.type) {
     case 'ADD_MUSIC':
       const {payload} = action;
       let songList = cloneDeep(state.songList);
-      const hasSong = songList.find(e => e.id === payload.id);
+      const hasSong = songList.find(e => e.id === payload?.id);
       //判断播放列表里是否有数据
-      if (!hasSong) {
+      if (!hasSong && payload) {
         songList.push(payload);
       }
       return {
-        id: payload.id,
+        id: payload?.id,
         songList: songList,
+        paused: false,
+      };
+    case 'SET_PLAY_STATUS':
+      musicTools.setNotifyPlayStatus(state.paused);
+      return {
+        ...state,
+        paused: !state.paused,
       };
     default:
       return state;
@@ -53,6 +83,7 @@ interface MusicStoreProps {
 const initState = {
   id: undefined,
   songList: [],
+  paused: false,
 };
 export const MusicContext = createContext<{
   state?: MusicStoreState;
@@ -61,8 +92,10 @@ export const MusicContext = createContext<{
   state: initState,
   dispatch: () => null,
 });
+
 const MusicStore = (props: MusicStoreProps) => {
   const [state, dispatch] = useReducer(reducer, initState);
+
   //当前歌曲
   const currentSong = useCreation(() => {
     if (!state.id || state.songList.length === 0) {
@@ -79,6 +112,7 @@ const MusicStore = (props: MusicStoreProps) => {
         <Video
           playInBackground={true}
           audioOnly={true}
+          paused={state.paused}
           source={{
             uri: currentSong?.songUrl || '',
           }}
@@ -89,38 +123,77 @@ const MusicStore = (props: MusicStoreProps) => {
   );
 };
 export default MusicStore;
-export const useMisic = () => {
+export const useMusic = () => {
   const {dispatch, state} = useContext(MusicContext);
-  const add = useMemoizedFn((song: songItemState) => {
-    const {channel: songChannel} = song;
+  const getSongDetail = useMemoizedFn((song: songItemState) => {
     if (state?.id === song.id) {
       return;
     }
     if (song && song.songId) {
-      const urlService = apiMap[songChannel];
-      urlService(song.songId)
-        .then(songUrl => {
-          if (!songUrl) {
-            showToast('获取播放路径失败！请切换渠道');
-            return;
-          }
-          const singerName = song.singer.map(e => e.name).join('/');
-          musicTools.notifyMusic(song.name, singerName, song.coverImage);
-          dispatch({
-            type: 'ADD_MUSIC',
-            payload: {
-              ...song,
-              songUrl,
-            },
-          });
-        })
-        .catch(() => {
-          showToast('获取播放路径失败！请切换渠道');
+      getSongUrl(song).then(songUrl => {
+        dispatch({
+          type: 'ADD_MUSIC',
+          payload: {
+            ...song,
+            songUrl,
+          },
         });
+        const singerName = song.singer.map(e => e.name).join('/');
+        musicTools.notifyMusic(song.name, singerName, song.coverImage);
+      });
+    }
+  });
+  const songList = state?.songList || [];
+  const id = state?.id;
+  const nextSong = useMemoizedFn(() => {
+    let songIndex = 0;
+    if (id && songList.length > 0) {
+      if (songList.length === 1) {
+        showToast('当前播放列表只有一条数据');
+        return;
+      }
+      for (let i = 0; i < songList.length; i++) {
+        if (id === songList[i]?.id) {
+          songIndex = i;
+          break;
+        }
+      }
+      songIndex = songIndex + 1 > songList.length - 1 ? 0 : songIndex + 1;
+      const newSong = songList[songIndex];
+      if (newSong) {
+        getSongDetail(newSong);
+      }
+    }
+  });
+  const lastSong = useMemoizedFn(() => {
+    let songIndex = 0;
+    if (id && songList.length > 0) {
+      if (songList.length === 1) {
+        showToast('当前播放列表只有一条数据');
+        return;
+      }
+      for (let i = 0; i < songList.length; i++) {
+        if (id === songList[i]?.id) {
+          songIndex = i;
+          break;
+        }
+      }
+      songIndex = songIndex - 1 < 0 ? 0 : songIndex - 1;
+      const newSong = songList[songIndex];
+      if (newSong) {
+        getSongDetail(newSong);
+      }
     }
   });
   return {
     state,
-    add,
+    add: getSongDetail,
+    nextSong,
+    lastSong,
+    playOrPause: () => {
+      dispatch({
+        type: 'SET_PLAY_STATUS',
+      });
+    },
   };
 };

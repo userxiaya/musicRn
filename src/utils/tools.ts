@@ -13,16 +13,3 @@ export const songChannelList: {channel: songChannel; label: string}[] = [
   {channel: 'netEase', label: '网易云'},
   {channel: 'kugou', label: '酷狗'},
 ];
-export function debounce(fn: any, t: number) {
-  let timeId: NodeJS.Timeout | null = null;
-  const delay = t || 1000;
-  return function (this: any, ...args: any) {
-    if (timeId) {
-      clearTimeout(timeId);
-    }
-    timeId = setTimeout(() => {
-      timeId = null;
-      fn.apply(this, args);
-    }, delay);
-  };
-}

@@ -1,12 +1,20 @@
-import React, {useEffect} from 'react';
-import {Alert, BackHandler, StatusBar, StyleSheet} from 'react-native';
+import React, {ReactNode, useEffect, useRef} from 'react';
+import {
+  Alert,
+  BackHandler,
+  StatusBar,
+  StyleSheet,
+  NativeEventEmitter,
+  NativeModules,
+} from 'react-native';
 
 import {SafeAreaProvider} from 'react-native-safe-area-context';
-import MusicStore from '@/store/music';
+import MusicStore, {useMusic} from '@/store/music';
 import Router from '@/routes';
 import ThemeStore from '@/store/theme';
-import {useMount, useSafeState, useUnmount} from 'ahooks';
+import {useMemoizedFn, useMount, useSafeState, useUnmount} from 'ahooks';
 import musicTools from '@/utils/musicTools';
+import {debounce} from 'lodash';
 
 const styles = StyleSheet.create({
   app: {
@@ -14,6 +22,34 @@ const styles = StyleSheet.create({
     position: 'relative',
   },
 });
+interface MusicNotifyProps {
+  children: ReactNode;
+}
+const MusicNotify = (props: MusicNotifyProps) => {
+  const eventEmitter = new NativeEventEmitter(NativeModules.ToastExample);
+  const {playOrPause, nextSong, lastSong} = useMusic();
+  const onNotifyCallback = useMemoizedFn(event => {
+    switch (event.status) {
+      case 'playOrPause':
+        playOrPause();
+        break;
+      case 'nextSong':
+        nextSong();
+        break;
+      case 'lastSong':
+        lastSong();
+        break;
+      default:
+        break;
+    }
+  });
+  const notifyCallback = useRef(
+    debounce(q => onNotifyCallback(q), 500),
+  ).current;
+  eventEmitter.addListener('notifyCallback', notifyCallback);
+  return <>{props.children}</>;
+};
+
 export default function App() {
   const [isMounted, setMounted] = useSafeState<boolean>(false);
   useMount(() => {
@@ -58,7 +94,9 @@ export default function App() {
       />
       <ThemeStore>
         <MusicStore>
-          <Router />
+          <MusicNotify>
+            <Router />
+          </MusicNotify>
         </MusicStore>
       </ThemeStore>
     </SafeAreaProvider>
