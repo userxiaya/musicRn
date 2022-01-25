@@ -1,6 +1,6 @@
 //当前播放的音乐
 import React, {createContext, useReducer, ReactNode, useContext} from 'react';
-import Video from 'react-native-video';
+import Video, {OnProgressData} from 'react-native-video';
 import {StyleSheet} from 'react-native';
 import {songItemState} from '@/types';
 import {getMusicUrlApi as qqMusicUrlApi} from '@/apis/qq';
@@ -26,14 +26,14 @@ const getSongUrl = (song: songItemState): Promise<string> => {
       .then(songUrl => {
         if (!songUrl) {
           showToast('获取播放路径失败！请切换渠道');
-          reject('');
+          reject('获取播放路径失败！请切换渠道');
           return;
         }
         resolve(songUrl);
       })
       .catch(() => {
         showToast('获取播放路径失败！请切换渠道');
-        reject('');
+        reject('获取播放路径失败！请切换渠道');
       });
   });
 };
@@ -79,6 +79,7 @@ function reducer(state: MusicStoreState, action?: MusicAction) {
 }
 interface MusicStoreProps {
   children: ReactNode;
+  onProgress?: (data: OnProgressData) => void;
 }
 const initState = {
   id: undefined,
@@ -116,6 +117,9 @@ const MusicStore = (props: MusicStoreProps) => {
           source={{
             uri: currentSong?.songUrl || '',
           }}
+          onProgress={data => {
+            props.onProgress && props.onProgress(data);
+          }}
           style={styles.backgroundVideo}
         />
       )}
@@ -130,17 +134,21 @@ export const useMusic = () => {
       return;
     }
     if (song && song.songId) {
-      getSongUrl(song).then(songUrl => {
-        dispatch({
-          type: 'ADD_MUSIC',
-          payload: {
-            ...song,
-            songUrl,
-          },
+      getSongUrl(song)
+        .then(songUrl => {
+          dispatch({
+            type: 'ADD_MUSIC',
+            payload: {
+              ...song,
+              songUrl,
+            },
+          });
+          const singerName = song.singer.map(e => e.name).join('/');
+          musicTools.notifyMusic(song.name, singerName, song.coverImage);
+        })
+        .catch(e => {
+          console.log(e);
         });
-        const singerName = song.singer.map(e => e.name).join('/');
-        musicTools.notifyMusic(song.name, singerName, song.coverImage);
-      });
     }
   });
   const songList = state?.songList || [];

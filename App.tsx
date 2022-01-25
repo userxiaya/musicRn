@@ -1,4 +1,12 @@
-import React, {ReactNode, useEffect, useRef} from 'react';
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import React, {
+  ReactNode,
+  Ref,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import {
   Alert,
   BackHandler,
@@ -7,14 +15,21 @@ import {
   NativeEventEmitter,
   NativeModules,
 } from 'react-native';
-
+import MinBar, {BarRef} from '@/components/minBar';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 import MusicStore, {useMusic} from '@/store/music';
 import Router from '@/routes';
 import ThemeStore from '@/store/theme';
-import {useMemoizedFn, useMount, useSafeState, useUnmount} from 'ahooks';
+import {
+  useCreation,
+  useMemoizedFn,
+  useMount,
+  useSafeState,
+  useUnmount,
+} from 'ahooks';
 import musicTools from '@/utils/musicTools';
 import {debounce} from 'lodash';
+import {OnProgressData} from 'react-native-video';
 
 const styles = StyleSheet.create({
   app: {
@@ -52,6 +67,7 @@ const MusicNotify = (props: MusicNotifyProps) => {
 
 export default function App() {
   const [isMounted, setMounted] = useSafeState<boolean>(false);
+  const barRef = useRef<BarRef>(null);
   useMount(() => {
     setTimeout(() => {
       setMounted(true);
@@ -93,9 +109,13 @@ export default function App() {
         barStyle="dark-content"
       />
       <ThemeStore>
-        <MusicStore>
+        <MusicStore
+          onProgress={data => {
+            barRef.current && barRef.current.setProgress?.(data);
+          }}>
           <MusicNotify>
             <Router />
+            <MinBar cRef={barRef} />
           </MusicNotify>
         </MusicStore>
       </ThemeStore>
