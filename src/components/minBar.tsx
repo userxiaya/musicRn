@@ -96,27 +96,23 @@ const Progress = ({
   }, [progress]);
   const progressContent = useMemo(() => {
     return (
-      <>
-        {music?.id && precent > 0 && (
-          <AnimatedCircularProgress
-            size={30}
-            width={2}
-            fill={precent}
-            rotation={0}
-            tintColor={theme?.text_color}
-            backgroundColor="#767676">
-            {() => (
-              <Icon
-                name={music?.paused === true ? 'icon-play' : 'icon-pause'}
-                size={20}
-                color={theme?.text_color}
-              />
-            )}
-          </AnimatedCircularProgress>
+      <AnimatedCircularProgress
+        size={30}
+        width={2}
+        fill={precent}
+        rotation={0}
+        tintColor={theme?.text_color}
+        backgroundColor="#767676">
+        {() => (
+          <Icon
+            name={music?.paused === true ? 'icon-play' : 'icon-pause'}
+            size={20}
+            color={theme?.text_color}
+          />
         )}
-      </>
+      </AnimatedCircularProgress>
     );
-  }, [music?.id, music?.paused, precent, theme?.text_color]);
+  }, [music?.paused, precent, theme?.text_color]);
   // 此处注意useImperativeHandle方法的的第一个参数是目标元素的ref引用
   useImperativeHandle(cRef, () => ({
     // changeVal 就是暴露给父组件的方法

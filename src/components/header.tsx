@@ -16,19 +16,22 @@ import {ThemeContext} from '@/store/theme';
 import LinearGradient from 'react-native-linear-gradient';
 
 const {StatusBarManager} = NativeModules;
-const STATUSBAR_HEIGHT =
-  (Platform.OS === 'ios' ? 20 : StatusBarManager.HEIGHT) / 2;
+const STATUSBAR_HEIGHT = Platform.OS === 'ios' ? 20 : StatusBarManager.HEIGHT;
 const styles = StyleSheet.create({
   header: {
     width: '100%',
-    height: STATUSBAR_HEIGHT + 60,
-    position: 'relative',
+    height: STATUSBAR_HEIGHT + 40,
     paddingTop: STATUSBAR_HEIGHT,
+  },
+  relative: {
+    width: '100%',
+    height: 40,
+    position: 'relative',
   },
   header_container: {
     position: 'absolute',
     width: '100%',
-    height: '100%',
+    height: STATUSBAR_HEIGHT + 40,
     top: 0,
     left: 0,
   },
@@ -46,7 +49,7 @@ const styles = StyleSheet.create({
     width: '60%',
     position: 'absolute',
     left: '20%',
-    top: STATUSBAR_HEIGHT,
+    top: 0,
     height: '100%',
   },
   right: {
@@ -54,8 +57,8 @@ const styles = StyleSheet.create({
     width: '20%',
     position: 'absolute',
     right: 0,
+    top: 0,
     overflow: 'hidden',
-    top: STATUSBAR_HEIGHT,
   },
   full: {
     flex: 1,
@@ -108,14 +111,16 @@ const Header = ({
         style={[styles.header_container, {opacity}]}
         colors={LinearColors}
       />
-      {backContent}
-      <Text
-        style={[styles.title, {color: color || theme?.text_color}]}
-        numberOfLines={1}>
-        {title}
-      </Text>
-      <View style={[styles.right]}>
-        <View style={[styles.full]}>{rightContent}</View>
+      <View style={styles.relative}>
+        {backContent}
+        <Text
+          style={[styles.title, {color: color || theme?.text_color}]}
+          numberOfLines={1}>
+          {title}
+        </Text>
+        <View style={[styles.right]}>
+          <View style={[styles.full]}>{rightContent}</View>
+        </View>
       </View>
     </View>
   );

@@ -157,21 +157,21 @@ const SongGroupDetail = ({route}: ReactNavicationRouteProps) => {
     return result;
   }, [imageBackground]);
   //渐变色
-  const LinearColors1 = useCreation(() => {
-    const defaultColor = [
-      'rgb(255,255,255)',
-      'rgb(255,255,255)',
-      'rgb(255,255,255)',
-    ];
-    const result = imageBackground
-      ? [
-          `rgba(${imageBackground.startColor},1)`,
-          `rgba(${imageBackground.startColor},1)`,
-          `rgba(${imageBackground.startColor},1)`,
-        ]
-      : defaultColor;
-    return result;
-  }, [imageBackground, scrollY]);
+  // const LinearColors1 = useCreation(() => {
+  //   const defaultColor = [
+  //     'rgb(255,255,255)',
+  //     'rgb(255,255,255)',
+  //     'rgb(255,255,255)',
+  //   ];
+  //   const result = imageBackground
+  //     ? [
+  //         `rgba(${imageBackground.startColor},1)`,
+  //         `rgba(${imageBackground.startColor},1)`,
+  //         `rgba(${imageBackground.startColor},1)`,
+  //       ]
+  //     : defaultColor;
+  //   return result;
+  // }, [imageBackground, scrollY]);
 
   const {data: playInfo, loading} = useRequest(
     () => service?.(params.id) as Promise<playDetail>,
@@ -189,6 +189,7 @@ const SongGroupDetail = ({route}: ReactNavicationRouteProps) => {
     }
   }, [playInfo, setBackground]);
   const onHeadLayout = useMemoizedFn(({nativeEvent}: LayoutChangeEvent) => {
+    console.log(nativeEvent.layout.height);
     setHeaderHeight(nativeEvent.layout.height);
   });
   const headContainer = useCreation(() => {
@@ -200,10 +201,10 @@ const SongGroupDetail = ({route}: ReactNavicationRouteProps) => {
         title={opacity > 0.7 ? playInfo?.name : '歌单'}
         style={[styles.header]}
         opacity={opacity > 1 ? 1 : opacity}
-        LinearColors={LinearColors1}
+        LinearColors={LinearColors}
       />
     );
-  }, [LinearColors1, scrollY]);
+  }, [LinearColors, scrollY]);
   const listHeader = useCreation(() => {
     return (
       <DetailHeader
