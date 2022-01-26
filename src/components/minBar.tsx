@@ -12,6 +12,7 @@ import {
   Image,
   TouchableOpacity,
   GestureResponderEvent,
+  Text,
 } from 'react-native';
 import {AnimatedCircularProgress} from 'react-native-circular-progress';
 import {ThemeContext} from '@/store/theme';
@@ -19,6 +20,7 @@ import {MusicStoreState, useMusic} from '@/store/music';
 import Icon from '@/components/icon';
 import {useCreation, useMemoizedFn} from 'ahooks';
 import {OnProgressData} from 'react-native-video';
+import {SingerItem} from '@/types';
 
 const styles = StyleSheet.create({
   container: {
@@ -52,6 +54,14 @@ const styles = StyleSheet.create({
     height: 36,
     width: 30,
     tintColor: '#fff',
+  },
+  barText: {
+    position: 'absolute',
+    left: 50,
+    height: '100%',
+    width: '55%',
+    color: '#fff',
+    textAlignVertical: 'center',
   },
 });
 export interface BarRef {
@@ -145,29 +155,41 @@ const Bar = ({cRef}: {cRef: Ref<BarRef>}) => {
     }
   }, [music?.id]);
   return (
-    <View style={styles.container}>
-      <View style={styles.relative}>
-        <Image
-          style={styles.image}
-          //android debug环境不生效
-          defaultSource={require('@/assets/image/default.png')}
-          source={{
-            uri: currentMusic?.coverImage,
-          }}
-        />
-        <Progress
-          cRef={progressRef}
-          music={music}
-          onPress={() => {
-            playOrPause && playOrPause();
-          }}
-        />
-        <Image
-          style={styles.message}
-          source={require('@/assets/image/musiclist.png')}
-        />
-      </View>
-    </View>
+    <>
+      {!!currentMusic && (
+        <View style={styles.container}>
+          <View style={styles.relative}>
+            <Image
+              style={styles.image}
+              //android debug环境不生效
+              defaultSource={require('@/assets/image/default.png')}
+              source={{
+                uri: currentMusic?.coverImage,
+              }}
+            />
+            <Text numberOfLines={1} style={styles.barText}>
+              {currentMusic?.name}-
+              {(currentMusic?.singer || ([] as SingerItem[]))
+                .map(e => {
+                  return e.name;
+                })
+                .join('/')}
+            </Text>
+            <Progress
+              cRef={progressRef}
+              music={music}
+              onPress={() => {
+                playOrPause && playOrPause();
+              }}
+            />
+            <Image
+              style={styles.message}
+              source={require('@/assets/image/musiclist.png')}
+            />
+          </View>
+        </View>
+      )}
+    </>
   );
 };
 export default Bar;

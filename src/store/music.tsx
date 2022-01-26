@@ -80,6 +80,7 @@ function reducer(state: MusicStoreState, action?: MusicAction) {
 interface MusicStoreProps {
   children: ReactNode;
   onProgress?: (data: OnProgressData) => void;
+  onEnd?: () => void;
 }
 const initState = {
   id: undefined,
@@ -116,6 +117,9 @@ const MusicStore = (props: MusicStoreProps) => {
           paused={state.paused}
           source={{
             uri: currentSong?.songUrl || '',
+          }}
+          onEnd={() => {
+            props.onEnd && props.onEnd();
           }}
           onProgress={data => {
             props.onProgress && props.onProgress(data);

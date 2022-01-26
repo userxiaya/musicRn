@@ -66,6 +66,7 @@ const MusicNotify = (props: MusicNotifyProps) => {
 };
 
 export default function App() {
+  const {nextSong} = useMusic();
   const [isMounted, setMounted] = useSafeState<boolean>(false);
   const barRef = useRef<BarRef>(null);
   useMount(() => {
@@ -110,6 +111,9 @@ export default function App() {
       />
       <ThemeStore>
         <MusicStore
+          onEnd={() => {
+            nextSong();
+          }}
           onProgress={data => {
             barRef.current && barRef.current.setProgress?.(data);
           }}>
